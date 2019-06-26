@@ -15,7 +15,7 @@
                     <el-popover trigger="hover" placement="right">
                         <span>{{ scope.row.email}}</span>
                         <div slot="reference" class="name-wrapper">
-                            <el-tag size="medium">{{ scope.row.email.substr(0,15) }}</el-tag>
+                            <el-tag size="medium" v-if="scope.row.email">{{ scope.row.email.substr(0,15) }}</el-tag>
                         </div>
                     </el-popover>
                 </template>
@@ -93,6 +93,7 @@ export default {
             sysroles: [],
             users: [],
             selUser:{
+                userid: 0,
                 userno:'',
                 usernm: ''
             },
@@ -138,9 +139,9 @@ export default {
                 }
             })
         },
-        getUserRole(userno){
+        getUserRole(userid){
             this.userroles = [];
-            this.$http.get(this.apiServer+'/api/system/getUserRole',{params:{userno:userno}}).then(res=>{
+            this.$http.get(this.apiServer+'/api/system/getUserRole',{params:{userid:userid}}).then(res=>{
                 res = res.data;
                 if(res.errcode == 0){                    
                     for(var i = 0; i < res.data.length; i++){
@@ -187,9 +188,10 @@ export default {
             this.setFormUserData(item);
         },
         editRole(item){
+            this.selUser.userid = item.user_id;
             this.selUser.userno = item.user_no;
             this.selUser.usernm = item.user_name;
-            this.getUserRole(item.user_no);
+            this.getUserRole(item.user_id);
             if(this.sysroles.length == 0)
                 this.getRoles();
         },
@@ -212,7 +214,7 @@ export default {
                 this.$alert('请选择角色','出错啦',{type:'error'});
                 return false;
             }
-            var data = {'userno': this.selUser.userno,'roles': this.userroles.join(','),'opuser': this.userinfo.user_no};
+            var data = {'userid': this.selUser.userid,'roles': this.userroles.join(','),'opuser': this.userinfo.user_id};
             this.$http.get(this.apiServer+'/api/system/saveUserRole',{params:data}).then(res=>{
                 res = res.data;
                 if(res.errcode == 0){

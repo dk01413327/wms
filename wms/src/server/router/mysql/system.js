@@ -5,8 +5,7 @@ var router = express.Router()
 var mysql = require('./../dao/mysql.js')
 var sqlMap = require('./../model/sqlMap.js')
 
-var sqlserver = require('./../dao/sqlserver.js')
-var sqlCreateor = require('./../model/sqlCreator.js')
+//var sqlserver = require('./../dao/sqlserver.js')
 var common = require('./../dao/common.js')
 
 //middleware that is speccific to this router
@@ -22,12 +21,13 @@ router.get('/getUser',function(req,res){
 	(async ()=>{
         var result = '';
 		try{
-            var sql = sqlCreateor.system.user.getUser();
-			result = await sqlserver.query(sql);
+            var sql = sqlMap.system.user.getUser;
+			result = await mysql.query(sql);
 			common.backResult(res,0,'OK',result);
 		}catch(err){
 			common.backResult(res,1,JSON.stringify(err));
 		}
+		
 	})()
 })
 
@@ -35,16 +35,12 @@ router.get('/getUserRole',function(req,res){
 	(async ()=>{
         var result = '';
 		try{
-            var sql = sqlCreateor.system.user.getUserRole(req.query);
-			result = await sqlserver.query(sql);
-			if(result.errcode){
-				common.backResult(res,1,result.errmsg);
-			}else{
-				common.backResult(res,0,'OK',result);
-				
-			}			
+            var sql = sqlMap.system.user.getUserRole;
+			result = await mysql.query(sql,req.query.userno);
+			common.backResult(res,0,'OK',result);
 		}catch(err){
 			common.backResult(res,1,JSON.stringify(err));
+
 		}
 		
 	})()
@@ -54,9 +50,11 @@ router.get('/saveUser',function(req,res){
 	(async ()=>{
         var result = '';
 		try{
-            var sql = sqlCreateor.system.user.saveUser(req.query);
-			result = await sqlserver.query(sql);
-			result = result[0];
+			var params = common.json2Array(req.query);
+            var sql = sqlMap.system.user.saveUser;
+			result = await mysql.query(sql,params);
+			result = result[0][0];
+			result = common.parseRowData(result);
 			common.backResult(res,result.errcode,result.errmsg);
 		}catch(err){
 			common.backResult(res,1,JSON.stringify(err));
@@ -67,22 +65,27 @@ router.get('/saveUser',function(req,res){
 
 router.get('/saveUserRole',function(req,res){
 	(async ()=>{
+        var result = '';
 		try{
-			var sql = sqlCreateor.system.user.saveUserRole(req.query);
-			var result = await sqlserver.query(sql);
-			result = result[0];
+			var params = common.json2Array(req.query);
+            var sql = sqlMap.system.user.saveUserRole;
+			result = await mysql.query(sql,params);
+			result = result[0][0];
+			result = common.parseRowData(result);
 			common.backResult(res,result.errcode,result.errmsg);
 		}catch(err){
 			common.backResult(res,1,JSON.stringify(err));
 		}
+		
 	})()
 })
 
 router.get('/getRole',function(req,res){
 	(async ()=>{
+        var result = '';
 		try{
-            var sql = sqlCreateor.system.role.getRole();
-			var result = await sqlserver.query(sql);
+            var sql = sqlMap.system.role.getRole;
+			result = await mysql.query(sql);
 			common.backResult(res,0,'OK',result);
 		}catch(err){
 			common.backResult(res,1,JSON.stringify(err));
@@ -92,10 +95,13 @@ router.get('/getRole',function(req,res){
 
 router.get('/saveRole',function(req,res){
 	(async ()=>{
+        var result = '';
 		try{
-			var sql = sqlCreateor.system.role.saveRole(req.query);
-			var result = await sqlserver.query(sql);
-			result = result[0];
+			var sql = sqlMap.system.role.saveRole;
+			var params = common.json2Array(req.query);
+			result = await mysql.query(sql,params);
+			result = result[0][0];
+			result = common.parseRowData(result);
 			common.backResult(res,result.errcode,result.errmsg);
 		}catch(err){
 			common.backResult(res,1,JSON.stringify(err));
@@ -107,8 +113,8 @@ router.get('/getRolePermission',function(req,res){
 	(async ()=>{
         var result = '';
 		try{
-			var sql = sqlCreateor.system.role.getRolePermission(req.query);
-			result = await sqlserver.query(sql);
+			var sql = sqlMap.system.role.getRolePermission;
+			result = await mysql.query(sql,req.query.roleid);
 			common.backResult(res,0,'OK',result);
 		}catch(err){
 			common.backResult(res,1,JSON.stringify(err));
@@ -120,9 +126,11 @@ router.get('/saveRolePermission',function(req,res){
 	(async ()=>{
         var result = '';
 		try{
-			var sql = sqlCreateor.system.role.saveRolePermission(req.query);
-			result = await sqlserver.query(sql);
-			result = result[0];
+			var sql = sqlMap.system.role.saveRolePermission;
+			var params = common.json2Array(req.query);
+			result = await mysql.query(sql,params);
+			result = result[0][0];
+			result = common.parseRowData(result);
 			common.backResult(res,result.errcode,result.errmsg);
 		}catch(err){
 			common.backResult(res,1,JSON.stringify(err));
@@ -134,9 +142,8 @@ router.get('/getMenuChkUser',function(req,res){
 	(async ()=>{
         var result = '';
 		try{
-			var sql = sqlCreateor.system.chkRoute.getMenuChkUser(req.query);
-			result = await sqlserver.query(sql);
-
+			var sql = sqlMap.system.chkRoute.getMenuChkUser;
+			result = await mysql.query(sql,req.query.menuid);
 			common.backResult(res,0,'OK',result);
 		}catch(err){
 			common.backResult(res,1,JSON.stringify(err));
@@ -146,11 +153,13 @@ router.get('/getMenuChkUser',function(req,res){
 
 router.get('/saveChkRoute',function(req,res){
 	(async ()=>{
+        var result = '';
 		try{
-			var sql = sqlCreateor.system.chkRoute.saveChkRoute(req.query);
-			console.log(sql)
-			var result = await sqlserver.query(sql);
-			result = result[0];
+			var sql = sqlMap.system.chkRoute.saveChkRoute;
+			var params = common.json2Array(req.query);
+			result = await mysql.query(sql,params);
+			result = result[0][0];
+			result = common.parseRowData(result);
 			common.backResult(res,result.errcode,result.errmsg);
 		}catch(err){
 			common.backResult(res,1,JSON.stringify(err));
@@ -161,8 +170,10 @@ router.get('/saveChkRoute',function(req,res){
 router.get('/saveRouteLevel',function(req,res){
 	(async ()=>{
 		try{
-			var sql = sqlCreateor.system.chkRoute.saveRouteLevel(req.query);
-			var result = await sqlserver.query(sql);
+			var result = '';
+			var sql = sqlMap.system.chkRoute.saveRouteLevel;
+			var params = common.json2Array(req.query);
+			result = await mysql.query(sql,params);
 			common.backResult(res,0,'保存成功');
 		}catch(err){
 			common.backResult(res,1,JSON.stringify(err));

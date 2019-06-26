@@ -98,7 +98,7 @@ export default {
     methods:{
         getSysMenu(){
             this.$store.dispatch('setMenu',[]);
-            var data ={userno: this.userinfo.user_no};
+            var data ={userid: this.userinfo.user_id};
             this.$http.get(this.apiServer+'/api/index/getmenu',{params: data}).then(res=>{
                 res = res.data;
                 if(res.errcode == 1){
@@ -184,9 +184,9 @@ export default {
                 this.$alert('新密码两次输入不一致','出错啦',{type:'error'});
                 return false;
             }
-            var data ={oldpass:this.oldpw,'newpass': this.newpw1,userid: this.userinfo.user_id};
+            var data ={userid: this.userinfo.user_id,oldpass:this.oldpw,'newpass': this.newpw1};
 
-            this.$http.get(this.apiServer+'/api/changePassword',{params:data}).then(res=>{
+            this.$http.get(this.apiServer+'/api/index/changePassword',{params:data}).then(res=>{
                 res = res.data;
                 if(res.errcode == 0){
                     this.$message({message:'密码修改成功',type:'success'})

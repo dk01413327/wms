@@ -173,7 +173,7 @@ export default {
             var data = {'roleid': value}
             this.$http.get(this.apiServer+'api/system/getRolePermission',{params:data}).then(res=>{
                 res = res.data;
-                data = res.data
+                data = res.data;
                 if(res.errcode == 0){
                     var ary = [];
                     for(var i = 0 ; i < data.length; i++){

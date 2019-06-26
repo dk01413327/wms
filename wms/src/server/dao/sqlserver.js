@@ -7,28 +7,16 @@ const pool = new sqlserver.ConnectionPool(conf.sqlConfig).connect();
 
 async function query(sql){    
     try{
-        const conn = await pool;
+        let conn = await pool;
         const request = await conn.request();
-        const result = await request.query('select 1 as cnt');
-        return result
+        const result = await request.query(sql);
+        //conn.close();
+        return result.recordset
     }catch(err){
-        return err
-    }
-}
-
-async function execute(procName,params){
-    try{
-        const conn = await pool;
-        const request = await conn.request();
-        await request.execute(procName,params,function(err,result,outValue){
-            return result;
-        })
-    }catch(err){
-        return err;
+        return {errcode:1,errmsg:err}
     }
 }
 
 module.exports = {
     query,
-    execute
 }

@@ -115,7 +115,7 @@ export default {
         },
         saveChkRoute(){
             if(this.chkusers.length==0){this.$message({message:'请选择审核人员',type:'error'});return;}
-            var data = {'menuid': this.selMenuId,'users': this.chkusers.join(','),'opuser':this.userinfo.user_no};
+            var data = {'menuid': this.selMenuId,'users': this.chkusers.join(','),'opuser':this.userinfo.user_id};
             this.$http.get(this.apiServer+'/api/system/saveChkRoute',{params: data}).then(res=>{
                 res = res.data;
                 if(res.errcode == 0){
@@ -128,7 +128,7 @@ export default {
             })
         },
         save(item){
-            var data = {level:item.chk_level,needmail: item.need_mail ? 1 : 0,chkid:item.id}
+            var data = {level: item.chk_level,needmail: item.need_mail ? 1 : 0,chkid: item.id}
             this.$http.get(this.apiServer+'/api/system/saveRouteLevel',{params:data}).then(res=>{
                 res = res.data;
                 if(res.errcode==0){

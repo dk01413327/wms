@@ -10,7 +10,7 @@ const system = {
     user:{
         getUser: 'select * from sys_user',
         saveUser: 'call sp_save_user(?,?,?,?,?,?)',
-        getUserRole: 'select b.role_id from sys_user a join sys_role_user b on a.user_no=b.user_no where a.user_no=?',
+        getUserRole: 'select b.role_id from sys_user a join sys_role_user b on a.user_id=b.user_id where a.user_id=?',
         saveUserRole: 'call sp_save_user_role(?,?,?)',
     },
     role:{

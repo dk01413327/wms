@@ -13,9 +13,12 @@ const config = {
 	},
 	sqlConfig: {
 		user: 'sa',
-		password: 'sa@123',
-		server: '192.168.187.188\\hr',
-		database: 'HRP_SIIX'
+		password: 'dk01413327',
+		server: 'localhost\\SQLEXPRESS',
+		database: 'wms',
+		options: {
+			useUTC: true
+		},
 	}
 }
 
